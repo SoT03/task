@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: monospace;
+    }
+
+    .wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    th,
+    td {
+        border: 1px solid #000;
+        padding: 0.5rem;
+        text-align: left;
+    }
+
+    th {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: #fff;
+        border: 1px solid #d5d9d9;
+        border-radius: 8px;
+        box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0;
+        box-sizing: border-box;
+        color: #0f1111;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 13px;
+        padding: 0.5rem 1rem;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        transition: color .3s, background-color .3s;
+    }
+
+    .btn:hover {
+        background-color: #2e2e2e;
+        color: #fff;
+    }
+
+    .flex--center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .total {
+        text-align: center;
+    }
+
+    .category-row {
+        background-color: #777;
+        color: #fff;
+    }
+
+    .month-row {
+        display: table-cell;
+        width: 20%;
+        padding-top: 1rem;
+        font-size: 1.5rem;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .expense-form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 600px;
+        padding: 2rem;
+        margin: 3rem auto;
+        background: #444;
+        color: #fff;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        .expense-form__title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .expense-form__body {
+            display: flex;
+            flex-direction: column;
+
+
+        }
+
+
+
+        .expense-form_btn {
+            margin-left: auto;
+            margin-top: 1rem;
+        }
+
+        .expense-form__group {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding-left: 2rem;
+            margin: 0.75rem 0;
+
+
+
+
+            label {
+                margin-right: 1rem;
+                width: 20%;
+            }
+
+            input,
+            select {
+                padding: 0.3rem 0.6rem;
+                width: 80%;
+                background-color: #fff;
+                border: none;
+            }
+        }
+
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .filter-heading {
+        font-size: 2.4rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<body>
+    <main>
+        <div class="wrapper">
+            <div class="expense-form">
+                <h2 class="expense-form__title">Add new expense</h2>
+                <form id="create-expense-form" class="expense-form__body">
+                    <div class="expense-form__group">
+                        <label for="">Date</label>
+                        <input required type="date" id="date" name="date">
+                    </div>
+                    <div class="expense-form__group">
+                        <label for="">Category</label>
+                        <select required>
+                            <option value="food">Food</option>
+                            <option value="fuel">Fuel</option>
+                        </select>
+
+
+                    </div>
+                    <div class="expense-form__group">
+                        <label for="">Amount</label>
+                        <input required type="number" id="amount" name="amount" step="0.01">
+                    </div>
+                    <div class="expense-form_btn">
+                        <button class="btn" type="submit">Add Expense</button>
+                    </div>
+                </form>
+            </div>
+
+
+            <div>
+
+                <h2 class="filter-heading">Expense Summary</h2>
+                <div>
+                    <form id="filter-form" class="filter-form">
+                        <div class="">
+                            <label for="month">Month:</label>
+                            <select id="month" name="month">
+                                <option value="">All</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="">
+                            <label for="category-filter">Category:</label>
+                            <select id="category-filter" name="category-filter">
+                                <option value="">All</option>
+                                <option value="food">Food</option>
+                                <option value="fuel">Fuel</option>
+                            </select>
+                        </div>
+
+                        <div class="">
+                            <label for="max-amount">Amount:</label>
+                            <input type="number" id="min-amount" name="min-amount"> <span>-</span>
+                            <input type="number" id="max-amount" name="max-amount">
+                        </div>
+                        <button class="btn" type="submit">Filter</button>
+                    </form>
+                </div>
+                <div id="summary">
+
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const expenses = [
+                { "date": "2023-03-01", category: "food", "amount": 55 },
+                { "date": "2023-03-31", category: "food", "amount": 6 },
+                { "date": "2023-03-31", category: "fuel", "amount": 210.2 },
+                { "date": "2023-03-01", category: "food", "amount": 23 },
+                { "date": "2023-04-02", category: "food", "amount": 9 },
+            ]
+
+            const createExpenseForm = document.querySelector('#create-expense-form')
+            const summaryDiv = document.querySelector("#summary");
+            const filterForm = document.querySelector("#filter-form");
+
+            const addExpense = (e) => {
+                e.preventDefault()
+
+                const newExpense = {
+                    'date': e.target[0].value,
+                    'category': e.target[1].value,
+                    'amount': parseFloat(e.target[2].value)
+                }
+
+                expenses.push(newExpense)
+                generateSummary();
+            }
+
+            filterForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+                generateSummary();
+            });
+
+
+            const numDays = (y, m) => { return new Date(y, m, 0).getDate() };
+
+
+
+
+            function generateSummary() {
+                const monthFilter = document.querySelector("#month").value;
+                console.log(monthFilter);
+                const categoryFilter = document.querySelector("#category-filter").value;
+                const minAmount = parseFloat(document.querySelector("#min-amount").value) || 0;
+                const maxAmount = parseFloat(document.querySelector("#max-amount").value) || Infinity;
+
+                const filteredExpenses = expenses.filter(expense => {
+                    const expenseMonth = expense.date.slice(5, 7);
+                    return (!monthFilter || monthFilter === expenseMonth)
+                        && (!categoryFilter || expense.category === categoryFilter)
+                        && (expense.amount >= minAmount && expense.amount <= maxAmount);
+                });
+
+
+
+                const summary = {};
+                filteredExpenses.forEach(expense => {
+                    const date = expense.date.slice(0, 7);
+                    const day = parseInt(expense.date.slice(8, 10));
+                    if (!summary[date]) {
+                        summary[date] = {};
+                    }
+                    if (!summary[date][expense.category]) {
+                        summary[date][expense.category] = { total: 0, days: {} };
+                    }
+                    if (!summary[date][expense.category].days[day]) {
+                        summary[date][expense.category].days[day] = [];
+                    }
+                    summary[date][expense.category].total += expense.amount;
+                    summary[date][expense.category].days[day].push(expense.amount);
+                });
+
+
+                summaryDiv.innerHTML = createTable(summary);
+            }
+
+            function createTable(summary) {
+                let html = `<table><tr><th>Month</th><th>Category <br> Day</th><th>Expenses</th></tr>`;
+
+
+
+                for (const date in summary) {
+                    const year = date.slice(0, 4);
+                    const month = date.slice(5, 7);
+                    const lengthOfObj = Object.keys(summary[date]).length
+                    const numberOfDays = numDays(year, month)
+                    const rowSpan = numDays(year, month) * lengthOfObj + (lengthOfObj > 1 ? 3 : 2)
+
+
+
+                    html += `<tr><td rowspan='${rowSpan}' class='month-row' >${date}</td><td colspan='2' class='total'>total: ${Object.values(summary[date]).reduce((acc, cat) => acc + cat.total, 0).toFixed(2)}</td></tr>`;
+
+                    for (const category in summary[date]) {
+                        html += `<tr class='category-row' ><td >${category}</td><td>total: ${summary[date][category].total.toFixed(2)}</td></tr>`;
+
+                        for (let day = 1; day <= numberOfDays; day++) {
+                            html += `<tr><td>${day}</td><td>${summary[date][category].days[day] ? summary[date][category].days[day] : "-"}</td></tr>`;
+                        }
+                    }
+                }
+
+                html += "</table>";
+                return html;
+            }
+            createExpenseForm.addEventListener("submit", addExpense);
+
+
+            generateSummary()
+        })
+
+    </script>
+</body>
+
+</html>
